@@ -6,8 +6,9 @@
 
 软星猎手2.0,，管理系统 + 后端服务
 
-线上访问地址：http://47.119.118.15/#/login
-Gitee 地址： https://gitee.com/liyaozhonghaoshuai/r-soft-star-workshop
+**线上访问地址：** http://47.119.118.15/#/login
+
+**Gitee 地址：**  https://gitee.com/liyaozhonghaoshuai/r-soft-star-workshop
  
    我深信，打造一款自己理想的管理基础模板是一件极具意义的事情。在开发的过程中，
 不仅可以满足个人对于系统功能和用户体验的独特追求，还能在这个过程中不断提升自己的技术水平与解决问题的能力。
