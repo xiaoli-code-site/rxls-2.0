@@ -1,0 +1,19 @@
+spring:
+  messages:
+    basename: core-module/i18n/messages
+    encoding: UTF-8
+
+  redis:
+    host: 192.168.88.130
+    port: 6379
+    password: meiguanxi.9
+    database: 0
+    lettuce:
+      pool:
+        max-idle: 16
+        max-active: 32
+        min-idle: 8
+
+#是否开启redis
+redis:
+  open: false
