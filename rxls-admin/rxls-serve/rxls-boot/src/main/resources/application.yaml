@@ -1,0 +1,47 @@
+#端口号配置
+server:
+  port: 9090
+
+spring:
+  #加载其他模块的yaml配置文件
+  profiles:
+    active: db,core,auth,quartz
+  #  上传文件配置
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 50MB
+
+#日志输出配置
+logging:
+  level:
+    cn.rx.db.mapper: debug
+    org.mybatis: debug
+    java.sql: debug
+    root: info
+    web: error
+    com.badmouth.mybatis plus.core.mapper: debug
+  pattern:
+    console: '%d{HH:mm:ss.SSS}->[%t] %clr(%-40.45c){cyan}: %clr(%p)-> %m %n'
+    ##设置文件编码格式
+  charset:
+    file: utf-8
+  file:
+    name: server.log
+  logback:
+    rolling policy:
+      ## 单个日志文件大小
+      max-file-size: 20MB
+      ## 日志文件名字
+      file-name-pattern: server.%d{yyyy-MM-dd}.%i.log
+      ##  保存時間30天
+      max-history: 30
+      total-size-cap: 30GB
+
+
+
+#微信配置
+rxsq:
+  wechat:
+    appid: 123456789
+    secret: 123456789

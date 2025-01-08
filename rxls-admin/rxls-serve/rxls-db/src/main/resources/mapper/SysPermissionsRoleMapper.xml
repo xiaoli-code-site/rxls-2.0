@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.rx.db.mapper.SysPermissionsRoleMapper">
+
+    <resultMap type="cn.rx.db.entity.SysPermissionsRole" id="PermissionsRoleMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="permissionsId" column="permissions_id" jdbcType="INTEGER"/>
+        <result property="roleId" column="role_id" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <!--    批量插入用户角色权限-->
+    <insert id="insertByRoleId">
+        insert into sys_permissions_role (permissions_id, role_id) values
+        <foreach collection="ids" item="id"  separator=",">
+            (#{id},#{roleId})
+        </foreach>
+    </insert>
+
+</mapper>
+

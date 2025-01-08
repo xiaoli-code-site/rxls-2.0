@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.rx.db.mapper.SysSchedulerTaskMapper">
+
+    <resultMap type="cn.rx.common.vo.sysSchedulerTask.SysSchedulerTaskVO" id="SysSchedulerTaskMap">
+        <result property="schedulerTaskId" column="scheduler_task_id" jdbcType="INTEGER"/>
+        <result property="jobName" column="job_name" jdbcType="VARCHAR"/>
+        <result property="expression" column="expression" jdbcType="VARCHAR"/>
+        <result property="jobCode" column="job_code" jdbcType="VARCHAR"/>
+        <result property="model" column="model" jdbcType="INTEGER"/>
+        <result property="startTime" column="start_time" jdbcType="TIMESTAMP"/>
+        <result property="endTime" column="end_time" jdbcType="TIMESTAMP"/>
+        <result property="state" column="state" jdbcType="INTEGER"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="groupName" column="group_name" jdbcType="VARCHAR"/>
+        <result property="unit" column="unit" jdbcType="VARCHAR"/>
+
+        <association property="user">
+            <result property="avatar" column="avatar" jdbcType="VARCHAR"/>
+            <result property="nickname" column="nickname" jdbcType="VARCHAR"/>
+        </association>
+    </resultMap>
+
+
+    <select id="selectPageSysSchedulerTask" resultType="cn.rx.common.vo.sysSchedulerTask.SysSchedulerTaskVO" resultMap="SysSchedulerTaskMap">
+        select
+        st.scheduler_task_id,
+        st.job_name,
+        st.expression,
+        st.job_code,
+        st.start_time,
+        st.end_time,
+        st.state,
+        st.unit,
+        st.model,
+        st.create_time,
+        st.update_time,
+        st.group_name,
+        u.avatar,
+        u.nickname
+        from sys_scheduler_task st join sys_user u on st.user_id = u.user_id
+        join sys_admin a on a.user_id = u.user_id
+        <where>
+            <if test="username != null and username != ''">
+               and u.nickname like concat('%',#{username},'%')
+            </if>
+            <if test="jobName != null and jobName != ''">
+               and st.job_name like concat('%',#{jobName},'%')
+            </if>
+            <if test="groupName != null and groupName != ''">
+               and st.group_name like concat('%',#{groupName},'%')
+            </if>
+        </where>
+        order by st.update_time desc
+        limit #{page},#{size}
+    </select>
+
+
+        <select id="countSysSchedulerTask" resultType="java.lang.Long">
+        select count(st.scheduler_task_id) from sys_scheduler_task st
+        join sys_user u on st.user_id = u.user_id
+        join sys_admin a on a.user_id = u.user_id
+        <where>
+            <if test="username != null and username != ''">
+                and u.nickname like concat('%',#{username},'%')
+            </if>
+            <if test="jobName != null and jobName != ''">
+                and st.job_name like concat('%',#{jobName},'%')
+            </if>
+            <if test="groupName != null and groupName != ''">
+                and st.group_name like concat('%',#{groupName},'%')
+            </if>
+        </where>
+    </select>
+
+
+</mapper>
+
