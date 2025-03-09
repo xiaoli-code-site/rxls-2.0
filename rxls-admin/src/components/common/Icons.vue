@@ -88,7 +88,7 @@ const props = defineProps({
     default: '',
   },
   /**
-   * 排序模式
+   * 排列模式
    */
   flexDirection: {
     type: String as PropType<'column' | 'row'>,

@@ -31,7 +31,13 @@ public class SysAdmin {
      */
     private String password;
 
-    //主键id
+    /**
+     * 用户id
+     */
     private Long userId;
+    /**
+     * 逻辑删除
+     */
+    private Integer deleted;
 
 }

@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.rx.db.mapper.SysAdminMapper">
 
-    <resultMap type="cn.rx.common.vo.sysAdmin.SysAdminVO" id="AdminMap">
+    <resultMap type="cn.rx.common.vo.admin.sysAdmin.SysAdminVO" id="AdminMap">
         <result property="userId" column="user_id" jdbcType="INTEGER"/>
         <result property="openid" column="openid" jdbcType="VARCHAR"/>
         <result property="phone" column="phone" jdbcType="VARCHAR"/>
@@ -13,12 +13,19 @@
         <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
         <result property="state" column="state" jdbcType="INTEGER"/>
         <result property="sex" column="sex" jdbcType="INTEGER"/>
-        <result property="roleName" column="roleName" jdbcType="VARCHAR"/>
+        <result property="born" column="born" jdbcType="TIMESTAMP"/>
+
+        <collection property="roles" ofType="cn.rx.common.vo.admin.sysRole.SysRoleVO">
+            <result property="roleId" column="role_id" jdbcType="INTEGER"/>
+            <result property="roleName" column="role_name" jdbcType="VARCHAR"/>
+            <result property="roleValue" column="role_value" jdbcType="INTEGER"/>
+            <result property="state" column="state" jdbcType="INTEGER"/>
+        </collection>
     </resultMap>
 
 
     <!--    分页查询管理员信息-->
-    <select id="selectPageAdmin" resultType="cn.rx.common.vo.sysAdmin.SysAdminVO" resultMap="AdminMap">
+    <select id="selectPageAdmin" resultType="cn.rx.common.vo.admin.sysAdmin.SysAdminVO" resultMap="AdminMap">
         select u.user_id,
         u.phone,
         u.avatar,
@@ -26,14 +33,17 @@
         u.create_time,
         u.update_time,
         u.state,
+        u.born,
         u.sex,
-        (select username from sys_admin where user_id = u.user_id ) as username,
-        group_concat(distinct r.role_name separator ',') as roleName
+        r.role_id,
+        r.role_value,
+        r.role_name,
+        (select username from sys_admin where user_id = u.user_id ) as username
         from sys_user u
         join sys_role_user ru on u.user_id = ru.user_id
         join sys_role r on ru.role_id = r.role_id
         where
-        r.role_value >= 100
+        r.role_value >= 100 and u.deleted = 0 and r.deleted = 0
         <if test="sysUser.phone != null">
             and u.phone like concat('%',#{sysUser.phone},'%')
         </if>
@@ -53,8 +63,7 @@
             and u.user_id in
             ( select ac.user_id from sys_admin ac where ac.username like concat('%',#{username},'%'))
         </if>
-        group by
-        u.user_id
+
         order by u.update_time desc
         limit #{page},#{size}
     </select>
@@ -66,7 +75,7 @@
         join sys_role_user ru on u.user_id = ru.user_id
         join sys_role r on ru.role_id = r.role_id
         where
-        r.role_value >= 100
+        r.role_value >= 100 and u.deleted = 0
         <if test="sysUser.phone != null">
             and u.phone like concat('%',#{sysUser.phone},'%')
         </if>
@@ -90,7 +99,7 @@
 
 
     <!--    根据用户id查询用户信息-->
-    <select id="selectInIds" resultType="cn.rx.common.vo.sysAdmin.SysAdminVO" resultMap="AdminMap">
+    <select id="selectInIds" resultType="cn.rx.common.vo.admin.sysAdmin.SysAdminVO" resultMap="AdminMap">
         select u.user_id,
         u.phone,
         u.avatar,
@@ -98,13 +107,17 @@
         u.create_time,
         u.update_time,
         u.state,
+        u.born,
         u.sex,
+        r.role_id,
+        r.role_value,
         r.role_name,
         (select username from sys_admin where user_id = u.user_id ) as username
         from sys_user u
         join sys_role_user ru on u.user_id = ru.user_id
         join sys_role r on ru.role_id = r.role_id
         where
+         u.deleted = 0 and
         u.user_id in
         <foreach item="id" index="index" collection="ids"
                  open="(" separator="," close=")">

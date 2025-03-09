@@ -1,16 +1,17 @@
 package cn.rx.system.service.impl;
 
-import cn.rx.common.dto.sysExcel.SysExcelUserDTO;
-import cn.rx.common.dto.sysUser.SysUserAddDTO;
-import cn.rx.common.dto.sysUser.SysUserPageDTO;
-import cn.rx.common.dto.sysUser.SysUserUpdateDTO;
+import cn.rx.common.dto.admin.sysExcel.SysExcelUserDTO;
+import cn.rx.common.dto.admin.sysUser.SysUserAddDTO;
+import cn.rx.common.dto.admin.sysUser.SysUserPageDTO;
+import cn.rx.common.dto.admin.sysUser.SysUserUpdateDTO;
 import cn.rx.common.enums.CommonStateEnum;
 import cn.rx.common.enums.R;
 import cn.rx.common.enums.RoleEnum;
-import cn.rx.common.util.ExcelUtil;
-import cn.rx.common.util.QueryUtil;
-import cn.rx.common.vo.sysUser.SysUserPageVO;
-import cn.rx.common.vo.sysUser.SysUserVO;
+import cn.rx.common.util.*;
+import cn.rx.common.vo.admin.sysRole.SysRoleVO;
+import cn.rx.common.vo.admin.sysUser.StatisticsVO;
+import cn.rx.common.vo.admin.sysUser.SysUserPageVO;
+import cn.rx.common.vo.admin.sysUser.SysUserVO;
 import cn.rx.core.exception.BusinessException;
 import cn.rx.db.entity.SysRole;
 import cn.rx.db.entity.SysRoleUser;
@@ -33,6 +34,7 @@ import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
+
 /**
  * 用户表(SysUser)表服务实现类
  */
@@ -40,6 +42,7 @@ import java.util.stream.Collectors;
 public class SysUserServiceImplSys extends ServiceImpl<SysUserMapper, SysUser> implements SysUserService, SysExcelService<SysExcelUserDTO> {
 
     private final SysUserMapper sysUserMapper;
+
 
     private final SysRoleMapper sysRoleMapper;
 
@@ -51,6 +54,7 @@ public class SysUserServiceImplSys extends ServiceImpl<SysUserMapper, SysUser> i
         this.sysRoleMapper = sysRoleMapper;
     }
 
+
     /**
      * 新增用户
      *
@@ -60,16 +64,6 @@ public class SysUserServiceImplSys extends ServiceImpl<SysUserMapper, SysUser> i
     @Transactional
     public void addUser(SysUserAddDTO dto) {
 
-        //检查传递的角色id合法性
-        LambdaQueryWrapper<SysRole> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(SysRole::getRoleId, dto.getRole());
-        SysRole sysRole = sysRoleMapper.selectOne(queryWrapper);
-        Optional.ofNullable(sysRole).orElseThrow(() -> new BusinessException(R.ERROR_PERMISSION));
-        if (sysRole.getRoleValue() >= RoleEnum.ADMIN_VALUE.value) {
-            throw new BusinessException(R.ERROR_PERMISSION);
-        }
-
-
         if (!QueryUtil.validatePhone(dto.getPhone())) {
             throw new BusinessException(R.ERROR_PHONE_FORMAT);
         }
@@ -78,6 +72,17 @@ public class SysUserServiceImplSys extends ServiceImpl<SysUserMapper, SysUser> i
             throw new BusinessException(R.ERROR_NAME_FORMAT);
         }
 
+        //检查角色id合法性
+        LambdaQueryWrapper<SysRole> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.in(SysRole::getRoleId, dto.getRoleIds());
+        List<SysRole> sysRoles = sysRoleMapper.selectList(queryWrapper);
+        if (Objects.isNull(sysRoles) || sysRoles.size() < 1) {
+            throw new BusinessException(R.ERROR_PERMISSION);
+        }
+        long count = sysRoles.stream().filter(r -> r.getRoleValue() >= RoleEnum.ADMIN_VALUE.value).count();
+        if (count > 0) {
+            throw new BusinessException(R.ERROR_PERMISSION);
+        }
 
         //检查手机号是否已被使用
         LambdaQueryWrapper<SysUser> userWrapper = new LambdaQueryWrapper<>();
@@ -85,7 +90,6 @@ public class SysUserServiceImplSys extends ServiceImpl<SysUserMapper, SysUser> i
         if (sysUserMapper.selectList(userWrapper).size() > 0) {
             throw new BusinessException(R.ERROR_PHONE_USED);
         }
-
 
         SysUser sysUser = new SysUser();
         BeanUtils.copyProperties(dto, sysUser);
@@ -95,13 +99,9 @@ public class SysUserServiceImplSys extends ServiceImpl<SysUserMapper, SysUser> i
             throw new BusinessException(R.ERROR_ENROLL);
         }
 
-        SysRoleUser sysRoleUser = new SysRoleUser();
-        sysRoleUser.setUserId(sysUser.getUserId());
-        sysRoleUser.setRoleId(dto.getRole());
-        if (sysRoleUserMapper.insert(sysRoleUser) < 1) {
-            throw new BusinessException(R.ERROR_ENROLL);
+        if (sysRoleUserMapper.insertByUserId(sysUser.getUserId(), dto.getRoleIds()) < 1) {
+            throw new BusinessException(R.ERROR_ADD);
         }
-//
     }
 
     /**
@@ -143,8 +143,10 @@ public class SysUserServiceImplSys extends ServiceImpl<SysUserMapper, SysUser> i
         }
 
         LambdaQueryWrapper<SysUser> wrapper = new LambdaQueryWrapper<>();
-        wrapper.in(SysUser::getUserId, idList);
-        int delete = sysUserMapper.delete(wrapper);
+        wrapper.in(SysUser::getUserId, idList).ne(SysUser::getDeleted, CommonStateEnum.ERROR.code);
+        SysUser sysUser = new SysUser();
+        sysUser.setDeleted(CommonStateEnum.OK.code);
+        int delete = sysUserMapper.update(sysUser, wrapper);
         if (delete < 1) {
             throw new BusinessException(R.ERROR_DELETE);
         }
@@ -171,28 +173,31 @@ public class SysUserServiceImplSys extends ServiceImpl<SysUserMapper, SysUser> i
             }
         });
 
-
-        Optional.ofNullable(dto.getRoleName()).ifPresent(s -> {
+        if (dto.getRoleIds().size() > 0) {
             //检查角色id合法性
             LambdaQueryWrapper<SysRole> queryWrapper = new LambdaQueryWrapper<>();
-            List<String> list = Arrays.stream(dto.getRoleName().split(",")).collect(Collectors.toList());
-            queryWrapper.in(SysRole::getRoleName, list).select(SysRole::getRoleValue, SysRole::getRoleId);
+            queryWrapper.in(SysRole::getRoleId, dto.getRoleIds()).select(SysRole::getRoleValue, SysRole::getRoleId);
             List<SysRole> sysRoles = sysRoleMapper.selectList(queryWrapper);
+            if (Objects.isNull(sysRoles) || sysRoles.size() < 1) {
+                throw new BusinessException(R.ERROR_PERMISSION);
+            }
             long count = sysRoles.stream().filter(r -> r.getRoleValue() >= RoleEnum.ADMIN_VALUE.value).count();
             if (count > 0) {
                 throw new BusinessException(R.ERROR_PERMISSION);
             }
             setUserRole(dto.getUserId(), sysRoles);
-        });
+        }
+
 
         LambdaUpdateWrapper<SysUser> wrapper = new LambdaUpdateWrapper<>();
-        wrapper.eq(SysUser::getUserId, dto.getUserId());
+        wrapper.eq(SysUser::getUserId, dto.getUserId()).eq(SysUser::getDeleted, CommonStateEnum.ERROR.code);
         SysUser sysUser = new SysUser();
         BeanUtils.copyProperties(dto, sysUser);
         if (sysUserMapper.update(sysUser, wrapper) < 1) {
             throw new BusinessException(R.ERROR_UPDATE);
         }
     }
+
 
     /**
      * 角色设置
@@ -229,7 +234,10 @@ public class SysUserServiceImplSys extends ServiceImpl<SysUserMapper, SysUser> i
             users.forEach(s -> {
                 ExcelUser user = new ExcelUser();
                 BeanUtils.copyProperties(s, user);
-                user.setRole(s.getRoleName());
+                List<String> roleNames = s.getRoles().stream().map(SysRoleVO::getRoleName).collect(Collectors.toList());
+                if (roleNames.size() > 0) {
+                    user.setRole(String.join(",", roleNames));
+                }
                 list.add(user);
             });
 
@@ -244,7 +252,10 @@ public class SysUserServiceImplSys extends ServiceImpl<SysUserMapper, SysUser> i
                 list.forEach(s -> {
                     ExcelUser data = new ExcelUser();
                     BeanUtils.copyProperties(s, data);
-                    data.setRole(s.getRoleName());
+                    List<String> roleNames = s.getRoles().stream().map(SysRoleVO::getRoleName).collect(Collectors.toList());
+                    if (roleNames.size() > 0) {
+                        data.setRole(String.join(",", roleNames));
+                    }
                     lists.add(data);
                 });
                 dataList.add(lists);
@@ -265,6 +276,16 @@ public class SysUserServiceImplSys extends ServiceImpl<SysUserMapper, SysUser> i
     public Boolean checkUser(Long uid, Integer roleId) {
         SysUser sysUser = sysUserMapper.selectByUserRole(uid, roleId);
         return Objects.nonNull(sysUser);
+    }
+
+    /**
+     * 用户统计
+     */
+    @Override
+    public StatisticsVO statistics() {
+        StatisticsVO data = new StatisticsVO();
+        data.setNum(sysUserMapper.statistics());
+        return data;
     }
 
 }

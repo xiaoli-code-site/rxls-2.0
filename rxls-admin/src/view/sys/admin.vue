@@ -2,13 +2,12 @@
   <div class="admin_box">
     <select-from-admin
       :role-list="roleList"
-      v-model:values="formState"
       @on-submit="onSearch"
       @on-clear="onClear"
     />
 
     <rx-table
-      y="57vh"
+      y="63vh"
       table-name="admin"
       :data-source="dataLists"
       :columns="columns"
@@ -41,7 +40,7 @@
 
         <template v-if="column.key === 'role'">
           <div
-            v-for="(item, index) in record.roleName.split(',')"
+            v-for="(item, index) in record.roles.map((s:Role)=>s.roleName)"
             :key="index"
             style="padding: 2px 0"
           >
@@ -50,6 +49,7 @@
             </a-tag>
           </div>
         </template>
+
 
         <template v-if="column.key === 'avatar'">
           <a-image
@@ -101,16 +101,21 @@
 <!-- 管理人员页面 -->
 <script lang="ts" setup>
 import { useI18n } from 'vue-i18n'
-import SelectFromAdmin from '@/components/business/from/select-from-admin.vue'
-import FromAdmin from '@/components/business/from/from-admin.vue'
-import RxTable from '@/components/business/rx_table/rx-table.vue'
+import SelectFromAdmin from '@/components/system/from/select-from-admin.vue'
+import FromAdmin from '@/components/system/from/from-admin.vue'
+import RxTable from '@/components/system/rx_table/rx-table.vue'
 import { CommonStateEnum } from '@/config/enum/common'
 import { onMounted, ref } from 'vue'
-import { AddQuery, Admin, PageQuery, UpdateQuery } from '@/api/admin/type'
+import {
+  AddQuery,
+  Admin,
+  PageQuery,
+  UpdateQuery,
+} from '@/api/system/admin/type'
 import { ClockCircleOutlined, PieChartOutlined } from '@ant-design/icons-vue'
-import { Role } from '@/api/role/type'
-import { ReqAllRole } from '@/api/role'
-import { tableHandler, Key } from '@/components/business/rx_table/handler'
+import { Role } from '@/api/system/role/type'
+import { ReqAllRole } from '@/api/system/role'
+import { useTableHandler, Key } from '@/components/system/rx_table/handler'
 
 /**
  * 角色列表
@@ -153,6 +158,12 @@ const columns = ref([
     width: 120,
   },
   {
+    title: 'avatar',
+    dataIndex: 'avatar',
+    key: 'avatar',
+    width: 100,
+  },
+  {
     title: 'role',
     dataIndex: 'role',
     key: 'role',
@@ -165,11 +176,12 @@ const columns = ref([
     width: 120,
   },
   {
-    title: 'avatar',
-    dataIndex: 'avatar',
-    key: 'avatar',
+    title: "born",
+    dataIndex: "born",
+    key: "born",
     width: 100,
   },
+
   {
     title: 'sex',
     dataIndex: 'Sex',
@@ -184,15 +196,15 @@ const columns = ref([
     width: 130,
   },
   {
+    title: 'state',
+    dataIndex: 'state',
+    key: 'state',
+  },
+  {
     title: 'createTime',
     dataIndex: 'createTime',
     key: 'createTime',
     width: 200,
-  },
-  {
-    title: 'state',
-    dataIndex: 'state',
-    key: 'state',
   },
   {
     title: 'updateTime',
@@ -222,10 +234,10 @@ const {
   excelHandler,
   delHandler,
   pageHandler,
-} = tableHandler<Admin, PageQuery, AddQuery, UpdateQuery>(
+} = useTableHandler<Admin, PageQuery, AddQuery, UpdateQuery>(
   'admin',
   'userId',
-  formState.value
+  formState
 )
 
 /**
@@ -243,7 +255,8 @@ const onAlter = (mode: boolean, data: Admin & Key, close: Function) => {
       sex: data.sex,
       avatar: data.avatar,
       password: data.password,
-      role: data.roleName,
+      roleIds: data.roles.map((s) => s.roleId),
+      born: data.born
     }
     addHandler(query, close)
     return
@@ -256,7 +269,8 @@ const onAlter = (mode: boolean, data: Admin & Key, close: Function) => {
       userId: data.userId,
       state: data.state,
       avatar: data.avatar,
-      roleName: data.roleName,
+      roleIds: data.roles.map((s) => s.roleId),
+      born: data.born
     }
     updateHandler(query, close)
   }
@@ -288,10 +302,15 @@ const resetHandler = () => {
 /**
  * 点击搜索
  */
-const onSearch = () => {
-  formState.value.page = 1
-  searchClick()
-}
+ const onSearch = (data?: PageQuery) => {
+  if (data) {
+    let size = formState.value.size;
+    formState.value = data;
+    formState.value.size = size;
+  }
+  formState.value.page = 1;
+  searchClick();
+};
 
 /**
  * 清空搜索条件

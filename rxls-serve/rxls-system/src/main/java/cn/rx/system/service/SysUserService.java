@@ -1,11 +1,12 @@
 package cn.rx.system.service;
 
 
-import cn.rx.common.dto.sysExcel.SysExcelUserDTO;
-import cn.rx.common.dto.sysUser.SysUserAddDTO;
-import cn.rx.common.dto.sysUser.SysUserPageDTO;
-import cn.rx.common.dto.sysUser.SysUserUpdateDTO;
-import cn.rx.common.vo.sysUser.SysUserPageVO;
+import cn.rx.common.dto.admin.sysExcel.SysExcelUserDTO;
+import cn.rx.common.dto.admin.sysUser.SysUserAddDTO;
+import cn.rx.common.dto.admin.sysUser.SysUserPageDTO;
+import cn.rx.common.dto.admin.sysUser.SysUserUpdateDTO;
+import cn.rx.common.vo.admin.sysUser.StatisticsVO;
+import cn.rx.common.vo.admin.sysUser.SysUserPageVO;
 import cn.rx.db.entity.SysUser;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -18,6 +19,8 @@ import java.util.List;
  * @author 不想说话而已
  */
 public interface SysUserService extends IService<SysUser> {
+
+
 
     /**
      * 新增用户
@@ -54,9 +57,10 @@ public interface SysUserService extends IService<SysUser> {
     /**
      * 变更用户信息
      *
-     * @param user id列表
+     * @param user 用户参数
      */
     void updateUser(SysUserUpdateDTO user);
+
 
 
     /**
@@ -74,4 +78,10 @@ public interface SysUserService extends IService<SysUser> {
      * @param value 权限值
      */
     Boolean checkUser(Long  uid, Integer value);
+
+    /**
+     * 用户统计
+     *
+     */
+    StatisticsVO statistics();
 }

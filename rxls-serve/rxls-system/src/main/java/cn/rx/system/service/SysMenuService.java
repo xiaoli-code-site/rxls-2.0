@@ -1,8 +1,9 @@
 package cn.rx.system.service;
 
 
-import cn.rx.common.vo.sysMenu.SysMenuVO;
-import cn.rx.common.vo.sysPermissions.SysMenuPermission;
+import cn.rx.common.vo.admin.sysMenu.SysAllMenuPermissionVO;
+import cn.rx.common.vo.admin.sysMenu.SysMenuVO;
+import cn.rx.common.vo.admin.sysPermissions.SysMenuPermissionsVO;
 import cn.rx.db.entity.SysMenu;
 import com.baomidou.mybatisplus.extension.service.IService;
 import org.apache.ibatis.annotations.Mapper;
@@ -28,5 +29,13 @@ public interface SysMenuService extends IService<SysMenu> {
     /**
      * 查询所有菜单权限信息
      */
-    List<SysMenuPermission> selectAllMenuPermission();
+    SysAllMenuPermissionVO selectAllMenuPermission();
+
+
+    /**
+     * 根据角色查询菜单权限信息
+     *
+     * @return 数据列表
+     */
+    Set<SysMenuVO> selectRoleMenuPermission(Integer roleId);
 }

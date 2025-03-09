@@ -1,6 +1,6 @@
 package cn.rx.db.mapper;
 
-import cn.rx.common.vo.sysUser.SysUserVO;
+import cn.rx.common.vo.admin.sysUser.SysUserVO;
 import cn.rx.db.entity.SysUser;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
@@ -21,7 +21,7 @@ public interface SysUserMapper extends BaseMapper<SysUser> {
      * @param openid 微信唯一标识
      * @return 用户信息
      */
-    SysUserVO selectByOpenid(String openid);
+    SysUserVO selectByOpenid(@Param("openid") String openid);
 
     /**
      * 查询用户信息
@@ -39,7 +39,7 @@ public interface SysUserMapper extends BaseMapper<SysUser> {
      * @param roleId 角色id
      * @return 用户信息
      */
-    List<SysUserVO> selectPageWithRoles(@Param("sysUser") SysUser sysUser,
+    List<SysUserVO> selectPageWithRoles(@Param("user") SysUser sysUser,
                                         @Param("page") Integer page,
                                         @Param("size") Integer size,
                                         @Param("roleId") Integer roleId);
@@ -51,7 +51,7 @@ public interface SysUserMapper extends BaseMapper<SysUser> {
      * @param roleId 角色id
      * @return 总数
      */
-    Long countPageWithRoles(@Param("sysUser") SysUser sysUser,
+    Long countPageWithRoles(@Param("user") SysUser sysUser,
                               @Param("roleId") Integer roleId);
 
     /**
@@ -69,5 +69,10 @@ public interface SysUserMapper extends BaseMapper<SysUser> {
      */
     SysUser selectByUserRole(@Param("id") Long uid, @Param("value")Integer value);
 
+
+    /**
+     * 用户统计
+     */
+    Integer statistics();
 }
 

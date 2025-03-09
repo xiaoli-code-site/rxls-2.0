@@ -1,11 +1,11 @@
 package cn.rx.system.service;
 
 
-import cn.rx.common.dto.sysAdmin.SysAdminAddDTO;
-import cn.rx.common.dto.sysAdmin.SysAdminPageDTO;
-import cn.rx.common.dto.sysAdmin.SysAdminUpdateDTO;
-import cn.rx.common.dto.sysExcel.SysSysExcelAdminDTO;
-import cn.rx.common.vo.sysAdmin.SysAdminPageVO;
+import cn.rx.common.dto.admin.sysAdmin.SysAdminAddDTO;
+import cn.rx.common.dto.admin.sysAdmin.SysAdminPageDTO;
+import cn.rx.common.dto.admin.sysAdmin.SysAdminUpdateDTO;
+import cn.rx.common.dto.admin.sysExcel.SysSysExcelAdminDTO;
+import cn.rx.common.vo.admin.sysAdmin.SysAdminPageVO;
 import cn.rx.db.entity.SysAdmin;
 import com.baomidou.mybatisplus.extension.service.IService;
 

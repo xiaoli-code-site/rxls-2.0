@@ -9,7 +9,7 @@
 import { onBeforeUnmount, onMounted, ref } from 'vue'
 import { useUserSotre } from '@/store/user'
 import { useRouter } from 'vue-router'
-import { Menu } from '@/api/admin/type'
+import { Menu } from '@/api/system/admin/type'
 
 /**
  * 路由操作

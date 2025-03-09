@@ -23,7 +23,7 @@ public class StorageUtil {
     public static void checkUsed(MultipartFile file, StorageType type) {
         //如果上传文件为空
         Optional.ofNullable(file).orElseThrow(() -> new BusinessException(R.ERROR));
-        //检查所有的上传文件类型是否是一个图片，并且大小是否合适
+        //检查所有的上传文件类型是否支持，并且大小是否合适
         String originalFilename = file.getOriginalFilename();
         Optional.ofNullable(originalFilename).orElseThrow(() -> new BusinessException(R.ERROR_UPLOAD_TYPE));
         String intercept = StrUtil.intercept(originalFilename.toLowerCase(), '.');
@@ -56,6 +56,9 @@ public class StorageUtil {
      */
     public static Boolean checkType(String name, String type) {
         String str = GeneralConfiguration.get(type);
+        if(Objects.isNull(str) || "".equals(str) ){
+            return false;
+        }
         String[] split = str.split(",");
         if (split.length == 0) {
             return true;

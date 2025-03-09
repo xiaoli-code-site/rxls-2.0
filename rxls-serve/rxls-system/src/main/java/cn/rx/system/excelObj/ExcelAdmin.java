@@ -61,7 +61,7 @@ public class ExcelAdmin {
     /**
      * 状态
      */
-    @ExcelProperty({"sysAdmin", "state"})
+    @ExcelProperty({"sysAdmin", "orderState"})
     private Integer state;
     /**
      * 1男  0女
@@ -71,7 +71,7 @@ public class ExcelAdmin {
     /**
      * 角色
      */
-    @ExcelProperty({"sysAdmin", "sysRole"})
+    @ExcelProperty({"sysAdmin", "sysPermissions"})
     private String role;
 
 }

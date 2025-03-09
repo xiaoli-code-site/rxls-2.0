@@ -21,39 +21,57 @@
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
 
-        <!--        1.公共模块-->
         <dependency>
             <groupId>cn.rx</groupId>
             <artifactId>rxls-common</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
 
-        <!--        2.服务模块-->
+
         <dependency>
             <groupId>cn.rx</groupId>
             <artifactId>rxls-system</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
 
-        <!--        3.核心模块-->
+
         <dependency>
             <groupId>cn.rx</groupId>
             <artifactId>rxls-core</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
 
-        <!--        4.认证模块-->
+
         <dependency>
             <groupId>cn.rx</groupId>
             <artifactId>rxls-auth</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
-        <!--                5.db模块-->
+
         <dependency>
             <groupId>cn.rx</groupId>
             <artifactId>rxls-db</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
+
+        <dependency>
+            <groupId>cn.rx</groupId>
+            <artifactId>rxls-quartz</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>cn.rx</groupId>
+            <artifactId>rxls-pay</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>cn.rx</groupId>
+            <artifactId>rxls-wx</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+
 
     </dependencies>
 

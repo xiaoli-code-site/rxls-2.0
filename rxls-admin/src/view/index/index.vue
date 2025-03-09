@@ -1,12 +1,12 @@
 <template>
   <div class="index_box">
     <a-layout>
-      <!--顶部导航栏 -->
-      <header-nav></header-nav>
+      <!--  侧边导航栏 -->
+      <menu-nav-bar />
 
       <a-layout>
-        <!--  侧边导航栏 -->
-        <menu-nav-bar />
+        <!--顶部导航栏 -->
+        <header-nav></header-nav>
 
         <!-- 展示内容 -->
         <a-layout-content class="content">
@@ -28,20 +28,20 @@
 
 <!-- 首页 -->
 <script setup lang="ts">
-import expandMenu from '@/components/business/expand-menu.vue'
-import menuNavBar from '@/components/business/menu-nav-bar.vue'
-import headerNav from '@/components/business/header-nav.vue'
+import expandMenu from "@/components/system/expand-menu.vue";
+import menuNavBar from "@/components/system/menu-nav-bar.vue";
+import headerNav from "@/components/system/header-nav.vue";
 </script>
 
 <style scoped lang="scss">
 .index_box {
-  min-width: 800px;
+  min-width: 900px;
   width: 100%;
   overflow: hidden;
 
   .content {
     padding: 0 6px;
-    width: calc(100% - 212px);
+    width: 100%;
     height: calc(100vh - 56px);
     overflow: auto;
   }
@@ -51,7 +51,7 @@ import headerNav from '@/components/business/header-nav.vue'
 /* fade-transform */
 .fade-leave-active,
 .fade-enter-active {
-  transition: all 0.4s;
+  transition: all 0.2s;
 }
 
 /* 可能为enter失效，拆分为 enter-from和enter-to */

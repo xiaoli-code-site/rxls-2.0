@@ -1,12 +1,12 @@
 package cn.rx.system.service.impl;
 
-import cn.rx.common.dto.sysConfig.SysConfigAddDTO;
-import cn.rx.common.dto.sysConfig.SysConfigPageDTO;
-import cn.rx.common.dto.sysConfig.SysConfigUpdateDTO;
+import cn.rx.common.dto.admin.sysConfig.SysConfigAddDTO;
+import cn.rx.common.dto.admin.sysConfig.SysConfigPageDTO;
+import cn.rx.common.dto.admin.sysConfig.SysConfigUpdateDTO;
 import cn.rx.common.enums.CommonStateEnum;
 import cn.rx.common.enums.R;
-import cn.rx.common.vo.sysConfig.SysConfigPageVO;
-import cn.rx.common.vo.sysConfig.SysConfigVO;
+import cn.rx.common.vo.admin.sysConfig.SysConfigPageVO;
+import cn.rx.common.vo.admin.sysConfig.SysConfigVO;
 import cn.rx.core.config.GeneralConfiguration;
 import cn.rx.core.exception.BusinessException;
 import cn.rx.db.entity.SysConfig;
@@ -89,6 +89,7 @@ public class SysConfigServiceImpl extends ServiceImpl<SysConfigMapper, SysConfig
      * @return 成功数
      */
     @Override
+    @Transactional
     public Integer deleteInIdList(List<Integer> idList) {
         LambdaQueryWrapper<SysConfig> wrapper = new LambdaQueryWrapper<>();
         wrapper.in(SysConfig::getId, idList);

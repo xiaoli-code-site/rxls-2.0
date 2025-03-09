@@ -4,16 +4,20 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --open",
     "build": "vue-tsc -b && vite build",
     "preview": "vite preview"
   },
   "dependencies": {
     "@types/crypto-js": "^4.2.2",
     "@types/node": "^22.7.5",
+    "@wangeditor/editor": "^5.1.23",
+    "@wangeditor/editor-for-vue": "^5.1.12",
     "ant-design-vue": "^4.2.5",
     "axios": "^1.7.7",
     "crypto-js": "^4.2.0",
+    "currency.js": "^2.0.4",
+    "echarts": "^5.6.0",
     "is-base64": "^1.1.0",
     "js-base64": "^3.7.7",
     "jsencrypt": "^3.3.2",

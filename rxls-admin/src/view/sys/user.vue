@@ -2,7 +2,6 @@
   <div class="user_box">
     <select-from-user
       :role-list="roleList"
-      v-model:values="formState"
       @on-submit="onSearch"
       @on-clear="onClear"
     />
@@ -11,7 +10,7 @@
       table-name="user"
       :data-source="dataLists"
       :columns="columns"
-      y="60vh"
+      y="63vh"
       :loading="loading"
       :total-data="dataTotal"
       :pagination="formState.page"
@@ -34,14 +33,14 @@
         <template v-if="column.key === 'sex'">
           <a-tag :color="record.sex === CommonStateEnum.YES ? 'pink' : 'blue'">
             {{
-              t(`user.${record.sex == CommonStateEnum.YES ? 'boy' : 'girl'}`)
+              t(`user.${record.sex == CommonStateEnum.YES ? "boy" : "girl"}`)
             }}
           </a-tag>
         </template>
 
         <template v-if="column.key === 'role'">
           <div
-            v-for="(item, index) in record.roleName.split(',')"
+            v-for="(item, index) in record.roles.map((s:Role)=>s.roleName)"
             :key="index"
             style="padding: 2px 0"
           >
@@ -73,7 +72,7 @@
               "
             ></component>
             {{
-              column.key === 'createTime'
+              column.key === "createTime"
                 ? record.createTime
                 : record.updateTime
             }}
@@ -87,7 +86,7 @@
             {{
               t(
                 `common.${
-                  record.state == CommonStateEnum.YES ? 'normal' : 'disable'
+                  record.state == CommonStateEnum.YES ? "normal" : "disable"
                 }`
               )
             }}
@@ -100,35 +99,35 @@
 
 <!-- 用户管理 -->
 <script lang="ts" setup>
-import { useI18n } from 'vue-i18n'
-import SelectFromUser from '@/components/business/from/select-from-user.vue'
-import FromUser from '@/components/business/from/from-user.vue'
-import RxTable from '@/components/business/rx_table/rx-table.vue'
-import { CommonStateEnum } from '@/config/enum/common'
-import { onMounted, ref } from 'vue'
-import { User, PageQuery, AddQuery, UpdateQuery } from '@/api/user/type'
-import { ClockCircleOutlined, PieChartOutlined } from '@ant-design/icons-vue'
-import { ReqAllRole } from '@/api/role'
-import { Role } from '@/api/role/type'
-import { tableHandler, Key } from '@/components/business/rx_table/handler'
+import { useI18n } from "vue-i18n";
+import SelectFromUser from "@/components/system/from/select-from-user.vue";
+import FromUser from "@/components/system/from/from-user.vue";
+import RxTable from "@/components/system/rx_table/rx-table.vue";
+import { CommonStateEnum } from "@/config/enum/common";
+import { onMounted, ref } from "vue";
+import { User, PageQuery, AddQuery, UpdateQuery } from "@/api/system/user/type";
+import { ClockCircleOutlined, PieChartOutlined } from "@ant-design/icons-vue";
+import { ReqAllRole } from "@/api/system/role";
+import { Role } from "@/api/system/role/type";
+import { useTableHandler, Key } from "@/components/system/rx_table/handler";
 
 /**
  * 国际化状态
  */
-const { t } = useI18n()
+const { t } = useI18n();
 
 /**
  * 查询表单
  */
 const formState = ref<PageQuery>({
-  nickname: '',
-  phone: '',
-  sex: '',
-  state: '',
+  nickname: "",
+  phone: "",
+  sex: "",
+  state: "",
   page: 1,
   size: 10,
-  role: '',
-})
+  role: "",
+});
 
 /**
  * 通用处理函数
@@ -143,79 +142,85 @@ const {
   excelHandler,
   delHandler,
   pageHandler,
-} = tableHandler<User, PageQuery, AddQuery, UpdateQuery>(
-  'user',
-  'userId',
-  formState.value
-)
+} = useTableHandler<User, PageQuery, AddQuery, UpdateQuery>(
+  "user",
+  "userId",
+  formState
+);
 
 /**
  * 列集合
  */
 const columns = ref([
   {
-    title: 'id',
-    dataIndex: 'userId',
-    key: 'userId',
+    title: "id",
+    dataIndex: "userId",
+    key: "userId",
     width: 100,
   },
   {
-    title: 'role',
-    dataIndex: 'role',
-    key: 'role',
+    title: "role",
+    dataIndex: "role",
+    key: "role",
     width: 120,
   },
   {
-    title: 'avatar',
-    dataIndex: 'avatar',
-    key: 'avatar',
+    title: "avatar",
+    dataIndex: "avatar",
+    key: "avatar",
     width: 100,
   },
   {
-    title: 'sex',
-    dataIndex: 'Sex',
-    key: 'sex',
+    title: "sex",
+    dataIndex: "Sex",
+    key: "sex",
     width: 100,
   },
   {
-    title: 'nickname',
-    dataIndex: 'nickname',
-    key: 'nickname',
+    title: "nickname",
+    dataIndex: "nickname",
+    key: "nickname",
     width: 120,
   },
   {
-    title: 'phone',
-    dataIndex: 'phone',
-    key: 'phone',
+    title: "born",
+    dataIndex: "born",
+    key: "born",
+    width: 100,
+  },
+  {
+    title: "phone",
+    dataIndex: "phone",
+    key: "phone",
     width: 130,
   },
 
   {
-    title: 'state',
-    dataIndex: 'state',
-    key: 'state',
+    title: "state",
+    dataIndex: "state",
+    key: "state",
     width: 100,
   },
   {
-    title: 'createTime',
-    dataIndex: 'createTime',
-    key: 'createTime',
+    title: "createTime",
+    dataIndex: "createTime",
+    key: "createTime",
     width: 200,
   },
   {
-    title: 'updateTime',
-    dataIndex: 'updateTime',
-    key: 'updateTime',
+    title: "updateTime",
+    dataIndex: "updateTime",
+    key: "updateTime",
     width: 200,
   },
   {
-    title: 'option',
-    dataIndex: 'option',
-    key: 'option',
-    fixed: 'right',
+    title: "option",
+    dataIndex: "option",
+    key: "option",
+    fixed: "right",
     width: 150,
   },
-])
+]);
 
 /**
  * 编辑，提交确认点击事件
@@ -230,22 +235,24 @@ const onAlter = (mode: boolean, data: User & Key, close: Function) => {
       nickname: data.nickname,
       sex: data.sex,
       avatar: data.avatar,
-      roleName: data.roleName,
-    }
-    addHandler(query, close)
-    return
+      roleIds: data.roles.map((s) => s.roleId),
+      born: data.born,
+    };
+    addHandler(query, close);
+    return;
   }
   let query: UpdateQuery = {
+    born: data.born,
     userId: data.userId,
     phone: data.phone,
     avatar: data.avatar,
     nickname: data.nickname,
     state: data.state,
     sex: data.sex,
-    roleName: data.roleName,
-  }
-  updateHandler(query, close)
-}
+    roleIds: data.roles.map((s) => s.roleId),
+  };
+  updateHandler(query, close);
+};
 
 /**
  * 分页事件
@@ -253,36 +260,41 @@ const onAlter = (mode: boolean, data: User & Key, close: Function) => {
  * @param pageSize 查询几个
  */
 const onPage = (page: number, pageSize: number) => {
-  formState.value.page = page
-  formState.value.size = pageSize
-  pageHandler()
-}
+  formState.value.page = page;
+  formState.value.size = pageSize;
+  pageHandler();
+};
 
 /**
  * 点击搜索
  */
-const onSearch = () => {
-  formState.value.page = 1
-  searchClick()
-}
+const onSearch = (data?: PageQuery) => {
+  if (data) {
+    let size = formState.value.size;
+    formState.value = data;
+    formState.value.size = size;
+  }
+  formState.value.page = 1;
+  searchClick();
+};
 
 /**
  * 清空搜索条件
  */
 const onClear = () => {
-  formState.value.nickname = ''
-  formState.value.phone = ''
-  formState.value.role = ''
-  formState.value.sex = ''
-  formState.value.state = ''
-  formState.value.page = 1
-  searchClick()
-}
+  formState.value.nickname = "";
+  formState.value.phone = "";
+  formState.value.role = "";
+  formState.value.sex = "";
+  formState.value.state = "";
+  formState.value.page = 1;
+  searchClick();
+};
 
 /**
  * 角色列表
  */
-const roleList = ref<Role[]>([])
+const roleList = ref<Role[]>([]);
 
 /**
  * 刷新、初始化事件
@@ -290,18 +302,18 @@ const roleList = ref<Role[]>([])
 const resetHandler = () => {
   ReqAllRole().then((res) => {
     if (res.data.code == CommonStateEnum.OK && res.data.data) {
-      roleList.value = res.data.data
+      roleList.value = res.data.data;
     }
-  })
-  onClear()
-}
+  });
+  onClear();
+};
 
 /**
  * 页面加载
  */
 onMounted(() => {
-  resetHandler()
-})
+  resetHandler();
+});
 </script>
 
 <style lang="scss" scoped>

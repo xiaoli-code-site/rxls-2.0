@@ -1,5 +1,6 @@
 package cn.rx.common.util;
 
+import java.security.SecureRandom;
 import java.util.Objects;
 
 /**
@@ -42,5 +43,23 @@ public class StrUtil {
             return null;
         }
         return value;
+    }
+
+    /**
+     * 生成指定长度的随机十六进制字符串
+     *
+     * @param length 字符串的长度
+     * @return 随机生成的十六进制字符串
+     */
+    public static String generateRandomHexString(int length) {
+        SecureRandom secureRandom = new SecureRandom();
+        byte[] token = new byte[length / 2];
+        secureRandom.nextBytes(token);
+
+        StringBuilder sb = new StringBuilder(length);
+        for (byte b : token) {
+            sb.append(String.format("%02x", b));
+        }
+        return sb.toString();
     }
 }

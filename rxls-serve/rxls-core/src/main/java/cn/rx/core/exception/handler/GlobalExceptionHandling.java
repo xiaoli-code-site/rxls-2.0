@@ -1,14 +1,12 @@
 package cn.rx.core.exception.handler;
 
 import cn.rx.common.constant.HeaderConstant;
-import cn.rx.common.enums.CommonStateEnum;
 import cn.rx.common.enums.R;
 import cn.rx.common.enums.oplog.LogLeve;
 import cn.rx.common.enums.oplog.LogModel;
 import cn.rx.common.result.Result;
 import cn.rx.common.util.HttpUtil;
 import cn.rx.common.util.IpUtil;
-import cn.rx.common.vo.sysLogin.SysLoginAdminVO;
 import cn.rx.core.exception.BusinessException;
 import cn.rx.db.entity.SysOplog;
 import cn.rx.db.mapper.SysOplogMapper;
@@ -54,7 +52,7 @@ public class GlobalExceptionHandling {
     @ExceptionHandler(Exception.class)
     public Result<?> doException(Exception ex) {
         log.error("未知异常：",ex);
-        setLog(LogLeve.GENERAL,LogModel.SECURE,ex,"系统错误,请联系管理员");
+        setLog(LogLeve.CRITICAL,LogModel.SECURE,ex,handlerMsg(R.ERROR_EXCEPTION.msg));
         return Result.error(R.ERROR_EXCEPTION, handlerMsg(R.ERROR_EXCEPTION.msg));
     }
 
@@ -62,6 +60,7 @@ public class GlobalExceptionHandling {
     @ExceptionHandler(value = {BusinessException.class})
     public Result<?> doBusinessException(BusinessException ex) {
         log.error("业务异常：",ex);
+        setLog(LogLeve.GENERAL,LogModel.SECURE,ex,handlerMsg(ex.getMessage()));
         return Result.error(ex.getCode(), handlerMsg(ex.getMessage()));
     }
 
@@ -69,7 +68,7 @@ public class GlobalExceptionHandling {
     @ExceptionHandler(value = {UnauthorizedException.class})
     public Result<?> doBusinessException(UnauthorizedException ex) {
         log.error("权限校验失败",ex);
-        setLog(LogLeve.GENERAL,LogModel.SECURE,ex,"权限校验失败");
+        setLog(LogLeve.GENERAL,LogModel.SECURE,ex,handlerMsg(R.ERROR_AUTHORIZED.msg));
         return Result.error(R.ERROR_PERMISSION,handlerMsg(R.ERROR_PERMISSION.msg));
     }
 
@@ -103,6 +102,38 @@ public class GlobalExceptionHandling {
         log.error("基本数据类型注解的校验失败",ex);
         List<String> msg = ex.getConstraintViolations().stream().map(ConstraintViolation::getMessageTemplate).collect(Collectors.toList());
         return Result.error(R.ERROR_QUERY, handlerMsg(msg));
+    }
+
+
+    /**
+     * 当请求需要接受数据，但请求体为空时
+     */
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public Result<?> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex) {
+        log.error("请求体为空",ex);
+        return Result.error(R.ERROR_QUERY, handlerMsg(R.ERROR_QUERY.msg));
+    }
+
+
+    public static String getLocal() {
+        String lang = HttpUtil.getHttpInfo().getHeader(HeaderConstant.LANGUAGE);
+        if (Objects.nonNull(lang)) {
+            return lang;
+        }
+        return "zh";
+    }
+
+    public String handlerMsg(String msg) {
+        try {
+            return messageSource.getMessage(msg, null, Locale.forLanguageTag(getLocal()));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return msg;
+        }
+    }
+
+    public String handlerMsg(List<String> msg) {
+        return String.join(",", msg);
     }
 
 
@@ -141,34 +172,4 @@ public class GlobalExceptionHandling {
         sysOplogMapper.insert(sysOplog);
     }
 
-    /**
-     * 当请求需要接受数据，但请求体为空时
-     */
-    @ExceptionHandler(HttpMessageNotReadableException.class)
-    public Result<?> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex) {
-        log.error("请求体为空",ex);
-        return Result.error(R.ERROR_QUERY, handlerMsg(R.ERROR_QUERY.msg));
-    }
-
-
-    public static String getLocal() {
-        String lang = HttpUtil.getHttpInfo().getHeader(HeaderConstant.LANGUAGE);
-        if (Objects.nonNull(lang)) {
-            return lang;
-        }
-        return "zh";
-    }
-
-    public String handlerMsg(String msg) {
-        try {
-            return messageSource.getMessage(msg, null, Locale.forLanguageTag(getLocal()));
-        } catch (Exception e) {
-            e.printStackTrace();
-            return msg;
-        }
-    }
-
-    public String handlerMsg(List<String> msg) {
-        return String.join(",", msg);
-    }
 }

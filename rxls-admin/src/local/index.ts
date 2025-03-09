@@ -7,17 +7,10 @@ import { createI18n } from 'vue-i18n'
  */
 export type LanguageType = 'zh' | 'en'
 
-const custom = {
-  common: {
-    abc: '1',
-  },
-}
-
 const i18n = createI18n({
   messages: {
     en,
-    zh,
-    custom,
+    zh
   },
   legacy: false,
   locale: 'zh', // 设置默认语言
@@ -25,8 +18,7 @@ const i18n = createI18n({
   missingWarn:false,
   silentFallbackWarn:true,
   fallbackWarn:false,
-  globalInjection: true, // 全局注册$t方法
-  fallbackLocale: 'custom', //如果没有找到要显示的语言，则默认显示
+  globalInjection: true, 
   missing(_locale, key, _vm) {
     let str = key.split('.')
     if (str.length == 1) {

@@ -34,7 +34,7 @@ public class LocalStorageService implements StorageService {
         Optional.ofNullable(files).orElseThrow(() -> new BusinessException(R.ERROR));
         //检查所有的上传文件类型是否是一个图片，并且大小是否合适
         files.forEach(f -> {
-            StorageUtil.checkUsed(f, StorageType.IMG);
+            StorageUtil.checkUsed(f, storageType);
         });
         //返回的图片路径集合
         List<String> urlList = new ArrayList<>();

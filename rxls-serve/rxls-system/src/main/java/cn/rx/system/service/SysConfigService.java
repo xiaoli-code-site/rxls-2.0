@@ -1,10 +1,10 @@
 package cn.rx.system.service;
 
 
-import cn.rx.common.dto.sysConfig.SysConfigAddDTO;
-import cn.rx.common.dto.sysConfig.SysConfigPageDTO;
-import cn.rx.common.dto.sysConfig.SysConfigUpdateDTO;
-import cn.rx.common.vo.sysConfig.SysConfigPageVO;
+import cn.rx.common.dto.admin.sysConfig.SysConfigAddDTO;
+import cn.rx.common.dto.admin.sysConfig.SysConfigPageDTO;
+import cn.rx.common.dto.admin.sysConfig.SysConfigUpdateDTO;
+import cn.rx.common.vo.admin.sysConfig.SysConfigPageVO;
 import cn.rx.db.entity.SysConfig;
 import com.baomidou.mybatisplus.extension.service.IService;
 

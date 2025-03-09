@@ -3,6 +3,7 @@
     class="login_box rx_no_select"
     :style="{ backgroundColor: token.colorBgBase }"
   >
+
     <!-- 登录表单 -->
     <a-form
       autocomplete="off"
@@ -135,12 +136,12 @@ import {
   BulbOutlined,
   BulbFilled,
 } from '@ant-design/icons-vue'
-import { ReqVerificationCode } from '@/api/verification'
-import { LoginQuery } from '@/api/admin/type'
+import { ReqVerificationCode } from '@/api/system/verification'
+import { LoginQuery } from '@/api/system/admin/type'
 import { theme } from 'ant-design-vue'
 import { useThemeStore } from '@/store/theme'
 import { useLocalStore } from '@/store/local'
-import { ReqLogin } from '@/api/admin'
+import { ReqLogin } from '@/api/system/admin'
 import { ReqEncrypt } from '@/api/request'
 import { AES, RSA } from '@/config/constant'
 import { createAesKey } from '@/encrypt/aesUtil'

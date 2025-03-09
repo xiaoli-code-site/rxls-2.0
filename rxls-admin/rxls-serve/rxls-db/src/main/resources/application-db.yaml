@@ -1,8 +1,0 @@
-spring:
-  #  数据库配置
-  datasource:
-    url: jdbc:mysql://localhost:3306/rxls_2.0?useSSL=false&allowPublicKeyRetrieval=true
-    username: root
-#    password: D6ZGSNazC5ZxwTDf
-    password: meiguanxi.
-    driver-class-name: com.mysql.cj.jdbc.Driver

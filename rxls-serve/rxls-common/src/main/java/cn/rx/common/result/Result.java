@@ -36,7 +36,7 @@ public class Result <T>{
 
 
     public static Result<?> success(){
-        return  new Result<>(R.SUCCESS.code,R.SUCCESS.msg ,null);
+        return new Result<>(R.SUCCESS.code,R.SUCCESS.msg ,null);
     }
 
     public static <T> Result<T>success(T data){

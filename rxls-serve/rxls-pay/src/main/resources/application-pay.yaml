@@ -1,0 +1,26 @@
+
+
+
+#微信配置
+wechat:
+  #小程序id
+  appid: xxx
+  #小程序秘钥
+  secret: xxx
+  #pem存储路径
+  privateKey: xxx
+  #支付回调网址
+  payNotify: xxx
+  #退款回调网址
+  refundNotify: xxx
+
+  #商户号
+  mchId: xxx
+  #商户秘钥
+  mchSerialKey: xxx
+  #商户证书序列号
+  mchSerialNo: xxx
+  #商户回调通知v3秘钥
+  v3PrivateKey: xxx
+  #微信服务器地址
+  domain: https://api.mch.weixin.qq.com

@@ -87,8 +87,8 @@ public class SysUploadFileServiceImpl implements SysUploadFileService {
         List<String> save = storageContext.get().save(files, StorageType.FILE);
         save.forEach(s -> {
             SysResources sysResources = new SysResources();
-            String url = StrUtil.interceptBefore(s, '.');
-            sysResources.setUrl(url);
+            String url = StrUtil.intercept(s, '.');
+            sysResources.setUrl(s);
             sysResources.setCategory(StorageType.FILE.name());
             sysResources.setServe(storageContext.get().getServeName());
             resourcesService.save(sysResources);

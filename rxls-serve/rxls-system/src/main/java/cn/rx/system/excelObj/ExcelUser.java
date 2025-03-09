@@ -56,7 +56,7 @@ public class ExcelUser{
     /**
      * 状态
      */
-    @ExcelProperty({"SysUser", "state"})
+    @ExcelProperty({"SysUser", "orderState"})
     private Integer state;
     /**
      * 1男  0女
@@ -66,7 +66,7 @@ public class ExcelUser{
     /**
      * 角色
      */
-    @ExcelProperty({"SysUser", "sysRole"})
+    @ExcelProperty({"SysUser", "sysPermissions"})
     private String role;
 
 }

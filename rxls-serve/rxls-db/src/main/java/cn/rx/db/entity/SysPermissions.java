@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 import java.util.Date;
 
 /**
- * 权限(sysPermissions)表实体类
+ * 权限(sysRole)表实体类
  *
  */
 @SuppressWarnings("serial")

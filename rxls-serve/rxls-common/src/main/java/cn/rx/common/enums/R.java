@@ -7,6 +7,38 @@ import lombok.AllArgsConstructor;
  */
 @AllArgsConstructor
 public enum R {
+
+
+    /**
+     * 退款金额不为空
+     */
+    ERROR_AFTER_SALES_AMOUNT_EMPTY(1001,"refundAmountNotEmpty"),
+
+
+    /**
+     * 内容不存在
+     */
+    ERROR_CONTENT_NO(1001,"contentNotExist"),
+
+    /**
+     * 账单不存在
+     */
+    ERROR_PAY_NO(1001, "payNo"),
+
+    /**
+     * 订单不存在
+     */
+    ERROR_ORDER_NO(1001, "orderNo"),
+
+    /**
+     * 权限不为空
+     */
+    ERROR_TASK_ALREADY(1001, "taskAlready"),
+
+    /**
+     * 任务不存在
+     */
+    ERROR_TASK_NO(1001, "taskNoEmpty"),
     /**
      * 权限不为空
      */
@@ -107,10 +139,6 @@ public enum R {
     ERROR_UPDATE(1001, "errorUpdate"),
 
     /**
-     * 请先登录
-     */
-    ERROR_LOGIN_NOT(1001, "errorLogin"),
-    /**
      * 用户不存在
      */
     ERROR_USER(1001, "errorUser"),
@@ -127,19 +155,25 @@ public enum R {
     /**
      * 无权操作
      */
-    ERROR_PERMISSION(1031, "unauthorizedOperation"),
+    ERROR_PERMISSION(1001, "unauthorizedOperation"),
     /**
      * 参数校验失败
      */
-    ERROR_QUERY(1021, "errorQuery"),
+    ERROR_QUERY(1001, "errorQuery"),
     /**
      * 授权失败
      */
-    ERROR_AUTHORIZED(1011, "errorAuthorized"),
+    ERROR_AUTHORIZED(1001, "errorAuthorized"),
     /**
      * 系统繁忙
      */
     ERROR_EXCEPTION(1001, "systemBusy"),
+
+    /**
+     * 请先登录
+     */
+    ERROR_LOGIN_NOT(1101, "errorLogin"),
+
     /**
      * 响应成功
      */
@@ -148,7 +182,7 @@ public enum R {
     /**
      * 响应失败
      */
-    ERROR(1000, "fail");
+    ERROR(404, "fail");
 
 
     /**

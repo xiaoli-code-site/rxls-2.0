@@ -1,6 +1,5 @@
 package cn.rx.core.config;
 
-
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.support.ResourceBundleMessageSource;
@@ -11,6 +10,7 @@ import org.springframework.web.servlet.LocaleResolver;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;

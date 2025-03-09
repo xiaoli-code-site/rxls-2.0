@@ -22,7 +22,7 @@
         <p style="padding: 20px 0 0">大家如果有啥意见，欢迎在Gitte私信我</p>
         <img
           class="logo"
-          src="https://www.lyzhnb.top/rx_to_do/icon/rx_logo.png"
+          src="../../assets/3.png"
         />
       </a-card>
       <a-card style="flex: 1">
@@ -91,7 +91,7 @@ const versionList = ref([
 
     .logo {
       width: 100%;
-      height: 400px;
+      height: 360px;
       object-fit: cover;
     }
 

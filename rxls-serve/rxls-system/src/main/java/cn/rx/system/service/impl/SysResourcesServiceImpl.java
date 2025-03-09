@@ -41,14 +41,20 @@ public class SysResourcesServiceImpl extends ServiceImpl<SysResourcesMapper, Sys
         LambdaQueryWrapper<SysResources> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.select(SysResources::getId).in(SysResources::getUrl, urlList);
         List<Long> collect = sysResourcesMapper.selectList(queryWrapper).stream().map(SysResources::getId).collect(Collectors.toList());
-        if (collect.isEmpty()) {
-            throw new BusinessException(R.ERROR_DELETE);
+//        if (collect.isEmpty()) {
+//            throw new BusinessException(R.ERROR_DELETE);
+//        }
+        if (collect.isEmpty() || collect.size() == 0) {
+            return 0;
         }
         LambdaQueryWrapper<SysResources> wrapper = new LambdaQueryWrapper<>();
         wrapper.in(SysResources::getId, collect);
         int delete = sysResourcesMapper.delete(wrapper);
+//        if (delete < 1) {
+//            throw new BusinessException(R.ERROR_DELETE);
+//        }
         if (delete < 1) {
-            throw new BusinessException(R.ERROR_DELETE);
+            return 0;
         }
         return delete;
     }
@@ -64,9 +70,9 @@ public class SysResourcesServiceImpl extends ServiceImpl<SysResourcesMapper, Sys
         LambdaQueryWrapper<SysResources> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(SysResources::getUrl, url);
         int delete = sysResourcesMapper.delete(wrapper);
-        if (delete < 1) {
-            throw new BusinessException(R.ERROR_DELETE);
-        }
+//        if (delete < 1) {
+//            throw new BusinessException(R.ERROR_DELETE);
+//        }
     }
 
     /**
@@ -101,9 +107,9 @@ public class SysResourcesServiceImpl extends ServiceImpl<SysResourcesMapper, Sys
         sysResources.setUrl(url);
         sysResources.setServe(serve);
         int delete = sysResourcesMapper.insert(sysResources);
-        if (delete < 1) {
-            throw new BusinessException(R.ERROR_ADD);
-        }
+//        if (delete < 1) {
+//            throw new BusinessException(R.ERROR_ADD);
+//        }
     }
 
     /**

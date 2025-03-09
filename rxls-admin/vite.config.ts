@@ -4,12 +4,10 @@ import { resolve } from 'path'
 import Components from 'unplugin-vue-components/vite'
 import { AntDesignVueResolver } from 'unplugin-vue-components/resolvers'
 
-// https://vitejs.dev/config/
 export default defineConfig({
-  // server: {
-  //   host: '0.0.0.0', // 允许从任意IP地址访问
-  //   port: 9090, // 设置你想要的端口号
-  // },
+  server: {
+    host: '0.0.0.0'
+  },
   plugins: [
     vue(),
     Components({

@@ -1,6 +1,6 @@
 package cn.rx.db.mapper;
 
-import cn.rx.common.vo.sysOplog.SysOplogVO;
+import cn.rx.common.vo.admin.sysOplog.SysOplogVO;
 import cn.rx.db.entity.SysOplog;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;

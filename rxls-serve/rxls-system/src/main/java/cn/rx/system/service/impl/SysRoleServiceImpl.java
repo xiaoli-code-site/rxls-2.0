@@ -1,20 +1,16 @@
 package cn.rx.system.service.impl;
 
-import cn.rx.common.dto.sysRole.SysRoleAddDTO;
-import cn.rx.common.dto.sysRole.SysRolePageDTO;
-import cn.rx.common.dto.sysRole.SysRoleUpdateDTO;
+import cn.rx.common.dto.admin.sysRole.SysRoleAddDTO;
+import cn.rx.common.dto.admin.sysRole.SysRolePageDTO;
+import cn.rx.common.dto.admin.sysRole.SysRoleUpdateDTO;
 import cn.rx.common.enums.CommonStateEnum;
 import cn.rx.common.enums.R;
 import cn.rx.common.enums.RoleEnum;
-import cn.rx.common.vo.sysRole.SysRolePageVO;
-import cn.rx.common.vo.sysRole.SysRoleVO;
+import cn.rx.common.vo.admin.sysRole.SysRolePageVO;
+import cn.rx.common.vo.admin.sysRole.SysRoleVO;
 import cn.rx.core.exception.BusinessException;
-import cn.rx.db.entity.SysPermissionsRole;
-import cn.rx.db.entity.SysRole;
-import cn.rx.db.entity.SysRoleUser;
-import cn.rx.db.mapper.SysPermissionsRoleMapper;
-import cn.rx.db.mapper.SysRoleMapper;
-import cn.rx.db.mapper.SysRoleUserMapper;
+import cn.rx.db.entity.*;
+import cn.rx.db.mapper.*;
 import cn.rx.system.service.SysRoleService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
@@ -41,15 +37,18 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
     private final List<Integer> foundationRole;
 
     private final SysRoleMapper sysRoleMapper;
+
+    private final SysRoleMenuMapper sysRoleMenuMapper;
     private final SysPermissionsRoleMapper sysPermissionsRoleMapper;
 
     private final SysRoleUserMapper sysRoleUserMapper;
 
 
-    SysRoleServiceImpl(SysRoleMapper sysRoleMapper, SysRoleUserMapper sysRoleUserMapper, SysPermissionsRoleMapper sysPermissionsRoleMapper) {
+    SysRoleServiceImpl(SysRoleMenuMapper sysRoleMenuMapper,SysRoleMapper sysRoleMapper, SysRoleUserMapper sysRoleUserMapper, SysPermissionsRoleMapper sysPermissionsRoleMapper) {
         this.sysRoleMapper = sysRoleMapper;
         this.sysPermissionsRoleMapper = sysPermissionsRoleMapper;
         this.sysRoleUserMapper = sysRoleUserMapper;
+        this.sysRoleMenuMapper = sysRoleMenuMapper;
         foundationRole = Arrays.asList(1, 2, 3);
     }
 
@@ -103,7 +102,7 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
         SysRolePageVO result = new SysRolePageVO();
         Page<SysRole> page = new Page<>(dto.getPage(), dto.getSize());
         LambdaQueryWrapper<SysRole> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(Objects.nonNull(dto.getState()), SysRole::getState, dto.getState()).like(Objects.nonNull(dto.getRoleName()), SysRole::getRoleName, dto.getRoleName()).orderByDesc(SysRole::getRoleValue).orderByDesc(SysRole::getUpdateTime);
+        wrapper.eq(SysRole::getDeleted,CommonStateEnum.ERROR.code).eq(Objects.nonNull(dto.getState()), SysRole::getState, dto.getState()).like(Objects.nonNull(dto.getRoleName()), SysRole::getRoleName, dto.getRoleName()).orderByDesc(SysRole::getRoleValue).orderByDesc(SysRole::getUpdateTime);
         Page<SysRole> list = sysRoleMapper.selectPage(page, wrapper);
         result.setTotal(list.getTotal());
         list.getRecords().forEach(s -> {
@@ -124,8 +123,10 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
     @Transactional
     public Integer deleteInIdList(List<Integer> idList) {
         LambdaQueryWrapper<SysRole> wrapper = new LambdaQueryWrapper<>();
-        wrapper.in(SysRole::getRoleId, idList).notIn(SysRole::getRoleId, foundationRole);
-        int delete = sysRoleMapper.delete(wrapper);
+        wrapper.eq(SysRole::getDeleted,CommonStateEnum.ERROR.code).in(SysRole::getRoleId, idList).notIn(SysRole::getRoleId, foundationRole);
+        SysRole sysRole = new SysRole();
+        sysRole.setDeleted(CommonStateEnum.OK.code);
+        int delete = sysRoleMapper.update(sysRole,wrapper);
         if (delete < 1) {
             throw new BusinessException(R.ERROR_DELETE);
         }
@@ -149,7 +150,7 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
     public void updateRole(SysRoleUpdateDTO dto) {
 
         LambdaUpdateWrapper<SysRole> wrapper = new LambdaUpdateWrapper<>();
-        wrapper.eq(SysRole::getRoleId, dto.getRoleId());
+        wrapper.eq(SysRole::getRoleId, dto.getRoleId()).eq(SysRole::getDeleted,CommonStateEnum.ERROR.code);
         SysRole sysRole = new SysRole();
         BeanUtils.copyProperties(dto, sysRole);
         //基础角色权限值不可更改
@@ -168,6 +169,13 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
             queryWrapper.eq(SysPermissionsRole::getRoleId, dto.getRoleId());
             sysPermissionsRoleMapper.delete(queryWrapper);
             sysPermissionsRoleMapper.insertByRoleId(dto.getRoleId(), dto.getPermissions());
+        }
+
+        if (Objects.nonNull(dto.getMenus()) && dto.getMenus().size() > 0) {
+            LambdaQueryWrapper<SysRoleMenu> queryWrapper = new LambdaQueryWrapper<>();
+            queryWrapper.eq(SysRoleMenu::getRoleId, dto.getRoleId());
+            sysRoleMenuMapper.delete(queryWrapper);
+            sysRoleMenuMapper.insertByRoleId(dto.getRoleId(), dto.getMenus());
         }
     }
 }

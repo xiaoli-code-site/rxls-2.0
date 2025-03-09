@@ -118,7 +118,7 @@
 import SSEHandler from '@/util/sse'
 import { useI18n } from 'vue-i18n'
 import { computed, onMounted, ref } from 'vue'
-import { SysData } from '@/api/sys/type'
+import { SysData } from '@/api/system/sys/type'
 import { SSE_URL, TOKEN } from '@/config/constant'
 
 /**

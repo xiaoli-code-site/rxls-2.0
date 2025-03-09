@@ -39,7 +39,10 @@ public class SysRole {
      * 状态
      */
     private Integer state;
-
+    /**
+     * 逻辑删除
+     */
+    private Integer deleted;
     /**
      * 创建时间
      */

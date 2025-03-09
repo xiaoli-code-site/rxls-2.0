@@ -2,6 +2,8 @@ spring:
   messages:
     basename: core-module/i18n/messages
     encoding: UTF-8
+  config:
+    import: "classpath:application-core.yaml"
 
   redis:
     host: 192.168.88.130
@@ -17,3 +19,6 @@ spring:
 #是否开启redis
 redis:
   open: false
+
+
+

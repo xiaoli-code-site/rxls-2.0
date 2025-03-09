@@ -1,6 +1,7 @@
 <template>
   <div>
     <a-image
+      v-if="props.imgList.length > 0"
       :preview="{ visible: false }"
       :width="props.width"
       :height="props.height"
@@ -24,7 +25,7 @@
 
 <!-- 相册组件 -->
 <script lang="ts" setup>
-import { PropType, ref } from 'vue'
+import { PropType, ref } from "vue";
 
 const props = defineProps({
   /**
@@ -39,21 +40,21 @@ const props = defineProps({
    */
   width: {
     type: Number,
-    default: 100,
+    default: 80,
   },
   /**
    * 高
    */
   height: {
     type: Number,
-    default: 100,
+    default: 80,
   },
-})
+});
 
 /**
  * 是否显示
  */
-const visible = ref(false)
+const visible = ref(false);
 </script>
 
 <style lang="scss" scoped></style>

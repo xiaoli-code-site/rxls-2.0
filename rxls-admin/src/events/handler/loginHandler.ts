@@ -1,4 +1,4 @@
-import { LoginData } from '@/api/admin/type'
+import { LoginData } from '@/api/system/admin/type'
 import { events } from '../eventBus'
 import { useRouter } from 'vue-router'
 import { useUserSotre } from '@/store/user'

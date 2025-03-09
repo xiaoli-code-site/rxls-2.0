@@ -1,16 +1,12 @@
 <template>
   <div class="role_box">
-    <select-from-role
-      v-model:values="formState"
-      @on-submit="onSearch"
-      @on-clear="onClear"
-    />
+    <select-from-role @on-submit="onSearch" @on-clear="onClear" />
 
     <rx-table
       table-name="role"
       :data-source="dataLists"
       :columns="columns"
-      y="60vh"
+      y="63vh"
       :loading="loading"
       :total-data="dataTotal"
       :pagination="formState.page"
@@ -23,7 +19,7 @@
     >
       <template #alter="{ onHandleBthClick, fromData }">
         <from-role
-          :pemissions="menuPermissionsData"
+          :auths="menuPermissionsData"
           :key="new Date() + 'role-from'"
           @handle-bth-click="onHandleBthClick"
           :data="fromData"
@@ -54,7 +50,7 @@
               "
             ></component>
             {{
-              column.key === 'createTime'
+              column.key === "createTime"
                 ? record.createTime
                 : record.updateTime
             }}
@@ -68,7 +64,7 @@
             {{
               t(
                 `common.${
-                  record.state == CommonStateEnum.YES ? 'normal' : 'disable'
+                  record.state == CommonStateEnum.YES ? "normal" : "disable"
                 }`
               )
             }}
@@ -81,32 +77,32 @@
 
 <!-- 角色管理 -->
 <script lang="ts" setup>
-import { useI18n } from 'vue-i18n'
-import SelectFromRole from '@/components/business/from/select-from-role.vue'
-import FromRole from '@/components/business/from/from-role.vue'
-import RxTable from '@/components/business/rx_table/rx-table.vue'
-import { CommonStateEnum } from '@/config/enum/common'
-import { onMounted, ref } from 'vue'
-import { Role, PageQuery, AddQuery, UpdateQuery } from '@/api/role/type'
-import { ClockCircleOutlined, PieChartOutlined } from '@ant-design/icons-vue'
-import { tableHandler, Key } from '@/components/business/rx_table/handler'
-import { ReqMenuPermissions } from '@/api/menu'
-import { MenuPermissions } from '@/api/menu/type'
+import { useI18n } from "vue-i18n";
+import SelectFromRole from "@/components/system/from/select-from-role.vue";
+import FromRole from "@/components/system/from/from-role.vue";
+import RxTable from "@/components/system/rx_table/rx-table.vue";
+import { CommonStateEnum } from "@/config/enum/common";
+import { onMounted, ref } from "vue";
+import { Role, PageQuery, AddQuery, UpdateQuery } from "@/api/system/role/type";
+import { ClockCircleOutlined, PieChartOutlined } from "@ant-design/icons-vue";
+import { useTableHandler, Key } from "@/components/system/rx_table/handler";
+import { ReqMenuPermissions } from "@/api/system/menu";
+import { MenuPermissions } from "@/api/system/menu/type";
 
 /**
  * 国际化状态
  */
-const { t } = useI18n()
+const { t } = useI18n();
 
 /**
  * 查询表单
  */
 const formState = ref<PageQuery>({
-  state: '',
-  roleName: '',
+  state: "",
+  roleName: "",
   size: 10,
   page: 1,
-})
+});
 
 /**
  * 通用处理函数
@@ -121,56 +117,56 @@ const {
   excelHandler,
   delHandler,
   pageHandler,
-} = tableHandler<Role, PageQuery, AddQuery, UpdateQuery>(
-  'role',
-  'roleId',
-  formState.value
-)
+} = useTableHandler<Role, PageQuery, AddQuery, UpdateQuery>(
+  "role",
+  "roleId",
+  formState
+);
 
 /**
  * 列集合
  */
 const columns = ref([
   {
-    title: 'id',
-    dataIndex: 'roleId',
-    key: 'roleId',
+    title: "id",
+    dataIndex: "roleId",
+    key: "roleId",
   },
   {
-    title: 'roleName',
-    dataIndex: 'roleName',
-    key: 'roleName',
+    title: "roleName",
+    dataIndex: "roleName",
+    key: "roleName",
   },
   {
-    title: 'roleValue',
-    dataIndex: 'roleValue',
-    key: 'roleValue',
+    title: "roleValue",
+    dataIndex: "roleValue",
+    key: "roleValue",
   },
   {
-    title: 'state',
-    dataIndex: 'state',
-    key: 'state',
+    title: "state",
+    dataIndex: "state",
+    key: "state",
   },
   {
-    title: 'createTime',
-    dataIndex: 'createTime',
-    key: 'createTime',
+    title: "createTime",
+    dataIndex: "createTime",
+    key: "createTime",
     width: 220,
   },
   {
-    title: 'updateTime',
-    dataIndex: 'updateTime',
-    key: 'updateTime',
+    title: "updateTime",
+    dataIndex: "updateTime",
+    key: "updateTime",
     width: 220,
   },
   {
-    title: 'option',
-    dataIndex: 'option',
-    key: 'option',
-    fixed: 'right',
+    title: "option",
+    dataIndex: "option",
+    key: "option",
+    fixed: "right",
     width: 150,
   },
-])
+]);
 
 /**
  * 编辑，提交确认点击事件
@@ -184,9 +180,10 @@ const onAlter = (mode: boolean, data: Role & Key, close: Function) => {
       roleName: data.roleName,
       roleValue: data.roleValue,
       permissions: data.permissions ?? [],
-    }
-    addHandler(query, close)
-    return
+      menus: data.menus ?? [],
+    };
+    addHandler(query, close);
+    return;
   }
   let query: UpdateQuery = {
     roleId: data.roleId,
@@ -194,9 +191,11 @@ const onAlter = (mode: boolean, data: Role & Key, close: Function) => {
     roleValue: data.roleValue,
     state: data.state,
     permissions: data.permissions ?? [],
-  }
-  updateHandler(query, close)
-}
+    menus: data.menus ?? [],
+  };
+  console.log(query);
+  updateHandler(query, close);
+};
 
 /**
  * 分页事件
@@ -204,32 +203,38 @@ const onAlter = (mode: boolean, data: Role & Key, close: Function) => {
  * @param pageSize 查询几个
  */
 const onPage = (page: number, pageSize: number) => {
-  formState.value.page = page
-  formState.value.size = pageSize
-  pageHandler()
-}
+  formState.value.page = page;
+  formState.value.size = pageSize;
+  pageHandler();
+};
 
 /**
  * 点击搜索
  */
-const onSearch = () => {
-  formState.value.page = 1
-  searchClick()
-}
+const onSearch = (data?: PageQuery) => {
+  if (data) {
+    let size = formState.value.size;
+    formState.value = data;
+    formState.value.size = size;
+  }
+  formState.value.page = 1;
+  searchClick();
+};
 
 /**
  * 清空搜索条件
  */
 const onClear = () => {
-  formState.value.state = ''
-  formState.value.page = 1
-  searchClick()
-}
+  formState.value.state = "";
+  formState.value.roleName = "";
+  formState.value.page = 1;
+  searchClick();
+};
 
 /**
  * 所有的权限信息
  */
-const menuPermissionsData = ref<MenuPermissions[]>([])
+const menuPermissionsData = ref<MenuPermissions>();
 
 /**
  * 刷新、初始化事件
@@ -237,20 +242,18 @@ const menuPermissionsData = ref<MenuPermissions[]>([])
 const resetHandler = () => {
   ReqMenuPermissions().then((res) => {
     if (res.data.code == CommonStateEnum.OK) {
-      menuPermissionsData.value = res.data.data
+      menuPermissionsData.value = res.data.data;
     }
-  })
-  onClear()
-}
-
-
+  });
+  onClear();
+};
 
 /**
  * 页面加载
  */
 onMounted(() => {
-  resetHandler()
-})
+  resetHandler();
+});
 </script>
 
 <style lang="scss" scoped>

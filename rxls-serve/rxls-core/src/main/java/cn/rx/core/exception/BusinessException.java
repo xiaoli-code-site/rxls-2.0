@@ -10,6 +10,8 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 @Data
 public class BusinessException extends RuntimeException{
+
+
     private Integer code;
     private String args; //请求参数
     private Exception exception; //异常

@@ -17,6 +17,11 @@
     <dependencies>
 
         <dependency>
+            <groupId>com.fasterxml.jackson.dataformat</groupId>
+            <artifactId>jackson-dataformat-xml</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>com.github.oshi</groupId>
             <artifactId>oshi-core</artifactId>
         </dependency>

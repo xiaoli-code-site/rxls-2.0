@@ -1,11 +1,10 @@
 package cn.rx.system.service;
 
 
-import cn.rx.common.dto.sysOplog.SysOplogPageDTO;
+import cn.rx.common.dto.admin.sysOplog.SysOplogPageDTO;
 import cn.rx.common.enums.CommonStateEnum;
-import cn.rx.common.vo.sysOplog.SysOplogPageVO;
+import cn.rx.common.vo.admin.sysOplog.SysOplogPageVO;
 import cn.rx.db.entity.SysOplog;
-import cn.rx.db.entity.SysUser;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.List;

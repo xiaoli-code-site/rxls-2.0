@@ -6,7 +6,7 @@
         <result property="id" column="id" jdbcType="INTEGER"/>
         <result property="userId" column="user_id" jdbcType="INTEGER"/>
         <result property="state" column="state" jdbcType="INTEGER"/>
-        <result property="category" column="category" jdbcType="INTEGER"/>
+        <result property="category" column="sysCategory" jdbcType="INTEGER"/>
         <result property="ip" column="ip" jdbcType="VARCHAR"/>
         <result property="result" column="result" jdbcType="VARCHAR"/>
         <result property="times" column="times" jdbcType="INTEGER"/>
@@ -19,7 +19,7 @@
     </resultMap>
 
 
-    <select id="selectOplogPage" resultType="cn.rx.common.vo.sysOplog.SysOplogVO">
+    <select id="selectOplogPage" resultType="cn.rx.common.vo.admin.sysOplog.SysOplogVO">
         select
         o.id,
         o.user_id,

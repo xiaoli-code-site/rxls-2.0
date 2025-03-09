@@ -1,15 +1,17 @@
 package cn.rx.system.service.impl;
 
 import cn.rx.common.constant.JwtConstant;
-import cn.rx.common.dto.sysAdmin.SysAdminAddDTO;
-import cn.rx.common.dto.sysAdmin.SysAdminPageDTO;
-import cn.rx.common.dto.sysAdmin.SysAdminUpdateDTO;
-import cn.rx.common.dto.sysExcel.SysSysExcelAdminDTO;
+import cn.rx.common.dto.admin.sysAdmin.SysAdminAddDTO;
+import cn.rx.common.dto.admin.sysAdmin.SysAdminPageDTO;
+import cn.rx.common.dto.admin.sysAdmin.SysAdminUpdateDTO;
+import cn.rx.common.dto.admin.sysExcel.SysSysExcelAdminDTO;
 import cn.rx.common.enums.CommonStateEnum;
 import cn.rx.common.enums.R;
+import cn.rx.common.enums.RoleEnum;
 import cn.rx.common.util.*;
-import cn.rx.common.vo.sysAdmin.SysAdminPageVO;
-import cn.rx.common.vo.sysAdmin.SysAdminVO;
+import cn.rx.common.vo.admin.sysAdmin.SysAdminPageVO;
+import cn.rx.common.vo.admin.sysAdmin.SysAdminVO;
+import cn.rx.common.vo.admin.sysRole.SysRoleVO;
 import cn.rx.core.exception.BusinessException;
 import cn.rx.db.entity.*;
 import cn.rx.db.mapper.*;
@@ -103,8 +105,7 @@ public class SysAdminServiceImplSys extends ServiceImpl<SysAdminMapper, SysAdmin
         SysRoleUser sysRoleUser = new SysRoleUser();
         sysRoleUser.setUserId(sysUser.getUserId());
         LambdaQueryWrapper<SysRole> roleWrapper = new LambdaQueryWrapper<>();
-        List<String> roleList = Arrays.stream(dto.getRole().split(",")).collect(Collectors.toList());
-        roleWrapper.in(SysRole::getRoleName, roleList).select(SysRole::getRoleId);
+        roleWrapper.in(SysRole::getRoleId, dto.getRoleIds()).select(SysRole::getRoleId);
         List<SysRole> sysRoles = sysRoleMapper.selectList(roleWrapper);
         setUserRole(sysUser.getUserId(), sysRoles);
         if (sysRoleUserMapper.insert(sysRoleUser) < 1) {
@@ -152,8 +153,10 @@ public class SysAdminServiceImplSys extends ServiceImpl<SysAdminMapper, SysAdmin
 
 
         LambdaQueryWrapper<SysUser> userWrapper = new LambdaQueryWrapper<>();
-        userWrapper.in(SysUser::getUserId, idList);
-        if (sysUserMapper.delete(userWrapper) < 1) {
+        userWrapper.in(SysUser::getUserId, idList).ne(SysUser::getDeleted,CommonStateEnum.ERROR.code);
+        SysUser sysUser = new SysUser();
+        sysUser.setDeleted(CommonStateEnum.OK.code);
+        if (sysUserMapper.update(sysUser,userWrapper) < 1) {
             throw new BusinessException(R.ERROR_DELETE);
         }
 
@@ -164,8 +167,10 @@ public class SysAdminServiceImplSys extends ServiceImpl<SysAdminMapper, SysAdmin
         }
 
         LambdaQueryWrapper<SysAdmin> wrapper = new LambdaQueryWrapper<>();
-        wrapper.in(SysAdmin::getUserId, idList);
-        int delete = sysAdminMapper.delete(wrapper);
+        wrapper.in(SysAdmin::getUserId, idList).ne(SysAdmin::getDeleted,CommonStateEnum.ERROR.code);
+        SysAdmin sysAdmin = new SysAdmin();
+        sysAdmin.setDeleted(CommonStateEnum.OK.code);
+        int delete = sysAdminMapper.update(sysAdmin,wrapper);
         if (delete < 1) {
             throw new BusinessException(R.ERROR_DELETE);
         }
@@ -205,24 +210,26 @@ public class SysAdminServiceImplSys extends ServiceImpl<SysAdminMapper, SysAdmin
                 throw new BusinessException(R.ERROR_PASSWORD_FORMAT);
             }
             LambdaUpdateWrapper<SysAdmin> wrapper = new LambdaUpdateWrapper<>();
-            wrapper.eq(SysAdmin::getUserId, dto.getUserId()).set(SysAdmin::getPassword, BcryptUtil.encrypt(dto.getPassword()));
+            wrapper.eq(SysAdmin::getDeleted,CommonStateEnum.ERROR.code).eq(SysAdmin::getUserId, dto.getUserId()).set(SysAdmin::getPassword, BcryptUtil.encrypt(dto.getPassword()));
             if (sysAdminMapper.update(null, wrapper) < 1) {
                 throw new BusinessException(R.ERROR_UPDATE);
             }
         });
 
 
-        Optional.ofNullable(dto.getRoleName()).ifPresent(s -> {
+
+        if (dto.getRoleIds().size() > 0) {
+            //检查角色id合法性
             LambdaQueryWrapper<SysRole> queryWrapper = new LambdaQueryWrapper<>();
-            List<String> list = Arrays.stream(dto.getRoleName().split(",")).collect(Collectors.toList());
-            queryWrapper.in(SysRole::getRoleName, list).select(SysRole::getRoleId);
+            queryWrapper.in(SysRole::getRoleId, dto.getRoleIds()).select(SysRole::getRoleValue, SysRole::getRoleId).eq(SysRole::getDeleted,CommonStateEnum.ERROR.code);
             List<SysRole> sysRoles = sysRoleMapper.selectList(queryWrapper);
-            if (sysRoles.size() == 0 || sysRoles.size() != list.size()) {
-                throw new BusinessException(R.ERROR_AUTHORIZED);
+            if (sysRoles.size() == 0 || sysRoles.size() != dto.getRoleIds().size()) {
+                throw new BusinessException(R.ERROR_PERMISSION);
             }
             setUserRole(dto.getUserId(), sysRoles);
+        }
 
-        });
+
 
 
         SysUser sysUser = new SysUser();
@@ -260,7 +267,7 @@ public class SysAdminServiceImplSys extends ServiceImpl<SysAdminMapper, SysAdmin
     @Override
     public void updateInfo(SysAdminUpdateDTO dto) {
         LambdaUpdateWrapper<SysUser> userWrapper = new LambdaUpdateWrapper<>();
-        userWrapper.eq(SysUser::getUserId, dto.getUserId());
+        userWrapper.eq(SysUser::getUserId, dto.getUserId()).eq(SysUser::getDeleted,CommonStateEnum.ERROR.code);
         SysUser sysUser = new SysUser();
         BeanUtils.copyProperties(dto, sysUser);
         if (sysUserMapper.update(sysUser, userWrapper) < 1) {
@@ -283,7 +290,7 @@ public class SysAdminServiceImplSys extends ServiceImpl<SysAdminMapper, SysAdmin
                 throw new BusinessException(R.ERROR_PASSWORD_FORMAT);
             }
             LambdaUpdateWrapper<SysAdmin> wrapper = new LambdaUpdateWrapper<>();
-            wrapper.eq(SysAdmin::getUserId, dto.getUserId()).set(SysAdmin::getPassword, BcryptUtil.encrypt(dto.getPassword()));
+            wrapper.eq(SysAdmin::getDeleted,CommonStateEnum.ERROR.code).eq(SysAdmin::getUserId, dto.getUserId()).set(SysAdmin::getPassword, BcryptUtil.encrypt(dto.getPassword()));
             if (sysAdminMapper.update(null, wrapper) < 1) {
                 throw new BusinessException(R.ERROR_UPDATE);
             }
@@ -313,7 +320,10 @@ public class SysAdminServiceImplSys extends ServiceImpl<SysAdminMapper, SysAdmin
             users.forEach(s -> {
                 ExcelAdmin user = new ExcelAdmin();
                 BeanUtils.copyProperties(s, user);
-                user.setRole(s.getRoleName());
+                List<String> roleNames = s.getRoles().stream().map(SysRoleVO::getRoleName).collect(Collectors.toList());
+                if(roleNames.size() > 0){
+                    user.setRole(String.join(",", roleNames));
+                }
                 list.add(user);
             });
             dataList.add(list);
@@ -327,7 +337,10 @@ public class SysAdminServiceImplSys extends ServiceImpl<SysAdminMapper, SysAdmin
                 list.forEach(s -> {
                     ExcelAdmin data = new ExcelAdmin();
                     BeanUtils.copyProperties(s, data);
-                    data.setRole(s.getRoleName());
+                    List<String> roleNames = s.getRoles().stream().map(SysRoleVO::getRoleName).collect(Collectors.toList());
+                    if(roleNames.size() > 0){
+                        data.setRole(String.join(",", roleNames));
+                    }
                     lists.add(data);
                 });
                 dataList.add(lists);

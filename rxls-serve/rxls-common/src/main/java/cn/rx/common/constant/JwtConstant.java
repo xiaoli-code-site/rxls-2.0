@@ -29,7 +29,7 @@ public class JwtConstant {
     /**
      * 创建jwt的秘钥key
      */
-    public static final String  SECRET_KEY = "rxls";
+    public static final String  SECRET_KEY = "auth";
 
 
     /**

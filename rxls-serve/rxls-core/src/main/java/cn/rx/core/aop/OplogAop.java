@@ -3,13 +3,10 @@ package cn.rx.core.aop;
 import cn.rx.common.annotations.Oplog;
 import cn.rx.common.constant.HeaderConstant;
 import cn.rx.common.enums.CommonStateEnum;
-import cn.rx.common.enums.R;
 import cn.rx.common.enums.oplog.LogLeve;
 import cn.rx.common.enums.oplog.LogModel;
-import cn.rx.common.result.Result;
 import cn.rx.common.util.HttpUtil;
 import cn.rx.common.util.IpUtil;
-import cn.rx.common.vo.sysLogin.SysLoginAdminVO;
 import cn.rx.core.exception.BusinessException;
 import cn.rx.db.entity.SysOplog;
 import cn.rx.db.mapper.SysOplogMapper;
@@ -58,9 +55,9 @@ public class OplogAop {
     @Around("aspect()")
     public Object handler(ProceedingJoinPoint pjp) throws Throwable {
 
-        if(1==1){
-            throw new BusinessException(R.ERROR.code,"演示模式，不容许操作");
-        }
+//        if(1==1){
+//            throw new BusinessException(R.ERROR.code,"演示模式，不容许操作");
+//        }
 
 
 

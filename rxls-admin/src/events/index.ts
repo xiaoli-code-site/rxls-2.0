@@ -8,12 +8,10 @@ import { refreshHandler } from './handler/refreshHandler'
  */
 const clearEvent = () => {
   let clearList = []
-
   clearList.push(logoutHandler())
   clearList.push(messageHandler())
   clearList.push(loginHandler())
   clearList.push(refreshHandler())
-
   return () => {
     clearList.forEach((fn) => fn())
   }

@@ -1,0 +1,5 @@
+
+auth:
+  #安全模式
+  mode: shiro
+#  mode: security

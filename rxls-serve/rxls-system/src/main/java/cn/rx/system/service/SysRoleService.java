@@ -1,11 +1,12 @@
 package cn.rx.system.service;
 
 
-import cn.rx.common.dto.sysRole.SysRoleAddDTO;
-import cn.rx.common.dto.sysRole.SysRolePageDTO;
-import cn.rx.common.dto.sysRole.SysRoleUpdateDTO;
-import cn.rx.common.vo.sysRole.SysRolePageVO;
-import cn.rx.common.vo.sysRole.SysRoleVO;
+
+import cn.rx.common.dto.admin.sysRole.SysRoleAddDTO;
+import cn.rx.common.dto.admin.sysRole.SysRolePageDTO;
+import cn.rx.common.dto.admin.sysRole.SysRoleUpdateDTO;
+import cn.rx.common.vo.admin.sysRole.SysRolePageVO;
+import cn.rx.common.vo.admin.sysRole.SysRoleVO;
 import cn.rx.db.entity.SysRole;
 import com.baomidou.mybatisplus.extension.service.IService;
 

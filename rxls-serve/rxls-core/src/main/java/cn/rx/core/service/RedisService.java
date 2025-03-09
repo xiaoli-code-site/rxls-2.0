@@ -8,6 +8,9 @@ import org.springframework.stereotype.Component;
 import javax.annotation.Resource;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * Redis服务
+ */
 @Component
 public class RedisService {
     @Resource

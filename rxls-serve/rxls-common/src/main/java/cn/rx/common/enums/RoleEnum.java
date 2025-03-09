@@ -25,6 +25,14 @@ public enum RoleEnum {
      */
     public final Integer value;
 
+    /**
+     * 是否是管理员角色
+     * @param id
+     * @return
+     */
+    public static boolean isAdmin(Integer id){
+        return ADMIN.value.equals(id)  || SUPER_ADMIN.value.equals(id);
+    }
 
     RoleEnum(Integer value) {
         this.value = value;

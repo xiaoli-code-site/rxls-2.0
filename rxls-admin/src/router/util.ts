@@ -1,4 +1,4 @@
-import { Menu } from '@/api/admin/type'
+import { Menu } from '@/api/system/admin/type'
 import router from '.'
 
 /**

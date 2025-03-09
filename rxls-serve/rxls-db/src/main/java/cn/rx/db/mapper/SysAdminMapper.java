@@ -1,6 +1,6 @@
 package cn.rx.db.mapper;
 
-import cn.rx.common.vo.sysAdmin.SysAdminVO;
+import cn.rx.common.vo.admin.sysAdmin.SysAdminVO;
 import cn.rx.db.entity.SysAdmin;
 import cn.rx.db.entity.SysUser;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
